@@ -18,7 +18,8 @@ class Embedding(nn.Module):
         super().__init__()
         self.config = config
         self.embedding = nn.Embedding(num_embeddings=self.config.vocab_size, embedding_dim=self.config.embedding_size)
-        self.encoding_vector = self.compute_encoding()
+        # Register as parameter to move to gpu with "to" method
+        self.encoding_vector = nn.Parameter(self.compute_encoding(), requires_grad=False)
 
     def compute_encoding(self):
         encoding_vector = torch.zeros((self.config.max_input_length, self.config.embedding_size))
@@ -73,7 +74,7 @@ class MultiHeadAttention(nn.Module):
         nn.init.xavier_normal_(self.W0)
         output_size = config.embedding_size // config.num_heads
         assert config.embedding_size % config.num_heads == 0
-        self.heads = [Attention(output_size, config) for _ in range(config.num_heads)]
+        self.heads =  nn.ModuleList([Attention(output_size, config) for _ in range(config.num_heads)])
 
     def forward(self, x):
         # Sequential forward pass
@@ -111,7 +112,7 @@ class Transformer(nn.Module):
     def __init__(self, config: TransformerConfig):
         super().__init__()
         self.embedding = Embedding(config)
-        self.blocks = [TransformerBlock(config) for _ in range(config.num_blocks)]
+        self.blocks =  nn.ModuleList([TransformerBlock(config) for _ in range(config.num_blocks)])
     
     def forward(self, x):
         x = self.embedding(x)

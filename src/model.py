@@ -12,6 +12,7 @@ class TransformerConfig:
     num_blocks: int = 6
     embedding_size: int = 512
     masked: bool = True
+    p_dropout: float = 0.1
 
 class Embedding(nn.Module):
     def __init__(self, config: TransformerConfig):
@@ -20,6 +21,7 @@ class Embedding(nn.Module):
         self.embedding = nn.Embedding(num_embeddings=self.config.vocab_size, embedding_dim=self.config.embedding_size)
         # Register as parameter to move to gpu with "to" method
         self.encoding_vector = nn.Parameter(self.compute_encoding(), requires_grad=False)
+        self.drop = nn.Dropout(p=config.p_dropout)
 
     def compute_encoding(self):
         encoding_vector = torch.zeros((self.config.max_input_length, self.config.embedding_size))
@@ -35,7 +37,7 @@ class Embedding(nn.Module):
         assert x.shape[1:] == self.encoding_vector[:num_tokens].shape
         # Encoding will be broadcast across batch dimension
         x = x + self.encoding_vector[:num_tokens]
-        return x
+        return self.drop(x)
 
 class Attention(nn.Module):
     def __init__(self, output_size, config: TransformerConfig):
@@ -102,10 +104,12 @@ class TransformerBlock(nn.Module):
         self.norm1 = nn.LayerNorm(config.embedding_size)
         self.ff_block = PositionalFF(config)
         self.norm2 = nn.LayerNorm(config.embedding_size)
+        self.drop1 = nn.Dropout(p=config.p_dropout)
+        self.drop2 = nn.Dropout(p=config.p_dropout)
     
     def forward(self, x):
-        x = self.norm1(self.attention_block(x)+x)
-        x = self.norm2(self.ff_block(x)+x)
+        x = self.norm1(self.drop1(self.attention_block(x))+x)
+        x = self.norm2(self.drop2(self.ff_block(x))+x)
         return x
 
 class Transformer(nn.Module):

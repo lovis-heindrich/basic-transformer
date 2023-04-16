@@ -113,9 +113,10 @@ class TransformerBlock(nn.Module):
         return x
 
 class Transformer(nn.Module):
-    def __init__(self, config: TransformerConfig):
+    def __init__(self, config: TransformerConfig, apply_softmax=True):
         super().__init__()
         self.embedding = Embedding(config)
+        self.apply_softmax = apply_softmax
         self.blocks =  nn.ModuleList([TransformerBlock(config) for _ in range(config.num_blocks)])
     
     def forward(self, x):
@@ -124,4 +125,7 @@ class Transformer(nn.Module):
             x = transformer_block(x)
         # Reuse embedding weights
         x = torch.matmul(x, self.embedding.embedding.weight.T)
-        return F.softmax(x, dim=-1)
+        if self.apply_softmax:
+            return F.softmax(x, dim=-1)
+        else:
+            return x

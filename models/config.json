@@ -1,0 +1,1 @@
+{"vocabulary_size": 6084, "max_input_length": 30, "batch_size": 64, "embedding_size": 256, "num_blocks": 4, "num_heads": 8, "num_epochs": 300, "val_split": 0.2, "warmup_steps": 4000, "lr_scale": 5}

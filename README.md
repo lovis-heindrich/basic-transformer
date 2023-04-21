@@ -1,12 +1,14 @@
 # basic-transformer
 
-This repository contains a simple implementation of a decoder-only transformer implemented from scratch in PyTorch. 
-
-Additionally, the implementation is tested by training a small transformer model Shakespeare's works.
+This repository contains a simple implementation of a decoder-only transformer implemented from scratch in PyTorch. The transformer implementation is tested by training a small model on Shakespeare's works. This repository was made for learning purposes and I don't expect the implementation to be optimal for performance or efficiency. 
 
 ## Model
 
-The transformer architecture is implemented from scratch in ```src/model.py```. The trained model consists of 4 transformer blocks with 8 attention heads, and an embedding size of 128. 
+The transformer architecture is implemented in ```src/model.py```.
+
+A proof-of-concept example of training a model on a toy task can be found in ```test_attention.pynb```. The positional encodings are visualized in ```test_encoding.ipynb```.
+
+For training on the Shakespeare dataset, a model consisting of 4 transformer blocks with 8 attention heads was used. The embedding size was set at 128 and the sequence length at 30 words. 
 
 ## Training
 
@@ -17,7 +19,7 @@ The training data is preprocessed using the code in ```src/load_data.py```. The 
 - Tokenize the data using word boundaries
 - Replace all words with less than 10 occurrences with an additional ```<unkown>``` token
 
-The current model has 1573632 parameters and was trained for 200 epochs (~100000 steps). Training code can be found in ```train_model.ipynb``` and ```src/train.py```.
+The model has 1573632 parameters and was trained for 200 epochs (~100000 steps). Training code can be found in ```train_model.ipynb``` and ```src/train.py```.
 
 The model was trained using a 20% validation split. The final model reached a validation accuracy of 0.2155.
 

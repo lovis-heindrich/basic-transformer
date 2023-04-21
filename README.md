@@ -1,11 +1,38 @@
 # basic-transformer
 
+This repository contains a simple implementation of a decoder-only transformer implemented from scratch in PyTorch. 
+
+Additionally, the implementation is tested by training a small transformer model Shakespeare's works.
+
+## Model
+
+The transformer architecture is implemented from scratch in ```src/model.py```. The trained model consists of 4 transformer blocks with 8 attention heads, and an embedding size of 128. 
+
 ## Training
 
-The current model has 2026752 parameters and took around 2 hours to train using a free Google Colab GPU.
+The model is trained on Shakespeare's works, which can be downloaded [here](https://www.gutenberg.org/files/100/100-0.txt). The file should be placed under ```data/shakespeare.txt```.
 
-### Training data
-The training data can be downloaded [here](https://www.gutenberg.org/files/100/100-0.txt). The file should be placed under ```data/shakespeare.txt```.
+The training data is preprocessed using the code in ```src/load_data.py```. The following preprocessing steps are applied:
+- Remove new lines, duplicate whitespaces, apostrophes, and brackets
+- Tokenize the data using word boundaries
+- Replace all words with less than 10 occurrences with an additional ```<unkown>``` token
+
+The current model has 1573632 parameters and was trained for 200 epochs (~100000 steps). Training code can be found in ```train_model.ipynb``` and ```src/train.py```.
+
+The model was trained using a 20% validation split. The final model reached a validation accuracy of 0.2155.
+
+## Sentence generation
+
+Here are some example sentences generated with the trained model. Prompts in the sentences are marked with brackets. Generation code can be found in ```generate_sentences.ipynb```. 
+
+- [if thou didst] not , thou art a fool . i am a fool , and thou art a fool . thou art a fool . clown . i am
+- [i] have a woman , and i have a good heart . but i will be a man of mine , and i will not be satisfied .
+- [i] am a man , and i am sure of it . i have said , and i will not be sworn to thee . i am a king ,
+- [you are] a merciful old wench . i am not able to wait upon my friend . i am glad to have merry a launcelet , if i had a
+- [you are] a beauteous blossom , and i will encounter thee with my nan . i am a proper friend . anne . i would not play a fool ,
+- [you are] in the field . enter a messenger . messenger . news , madam , news ! cleopatra . what news ? messenger . the news ? messenger . the king is gone . messenger . the lord mortimer is coming . antony . the noble antony is come
+- [like the sky] , and the wind and the moon . o , what a one that is in the other ?
+- [i] am a gentleman of love , and a man of all the world .
 
 ## Used resources
 
